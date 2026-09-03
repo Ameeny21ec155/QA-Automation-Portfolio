@@ -1,0 +1,49 @@
+import {test , expect , Locator} from "@playwright/test"
+
+test("Hidde bootstrap dropdowns",async({page})=>{
+
+    await page.goto("https://opensource-demo.orangehrmlive.com/web/index.php/auth/login");
+
+    // Login steps
+
+    await page.locator('input[name="username"]').fill("Admin");
+    await page.locator('input[name="password"]').fill("admin123")
+    await page.locator('button[type="submit"]').click();
+
+    // click on the PIM
+    await page.getByText('PIM').click();
+
+    // click on the JOB title dropdown
+    await page.locator('form i').nth(2).click();
+    
+
+    // capture all the options from dropdown and count 
+
+    const options: Locator = page.locator("div[role='listbox'] span");
+
+    const count:number = await options.count();
+    console.log("Number of options in a dropdown:",count);
+
+    // print all the options
+
+    console.log("All the text contest:",await options.allTextContents());
+
+    console.log("Printing all the options..")
+    for(let i=0;i<count;i++)
+    {
+        // console.log(await options.nth(1).innerText());
+        console.log(await options.nth(i).textContent());
+    }
+    
+    //Select/click on option
+    for(let i=0;i<count;i++)
+    {
+        const text=await options.nth(i).innerText();
+        if(text=='Automation Tester'){
+            await options.nth(i).click();
+            break;
+        }
+    }
+
+    await page.waitForTimeout(5000);
+});
